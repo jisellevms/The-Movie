@@ -1,10 +1,12 @@
 package com.jisellemartins.themovie;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private AdapterMovie adapterMovie;
     private RecyclerView recyclerMoviesBr, recyclerMoviesUs;
     private LinearLayoutManager layoutManagerBr, layoutManagerUs;
+    private Activity activity;
 
 
     @Override
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerMoviesUs = findViewById(R.id.recyclerMoviesUs);
         results = new ArrayList<>();
 
-
+        activity = this;
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.themoviedb.org/3/movie/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -47,10 +50,10 @@ public class MainActivity extends AppCompatActivity {
 
         layoutManagerBr = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         layoutManagerUs = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerMoviesBr.addItemDecoration(new DividerItemDecoration(this,
+      /*  recyclerMoviesBr.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.HORIZONTAL));
         recyclerMoviesUs.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.HORIZONTAL));
+                DividerItemDecoration.HORIZONTAL));*/
 
 
         recuperarDadosBr();
@@ -67,9 +70,8 @@ public class MainActivity extends AppCompatActivity {
                          public void onResponse(Call<ResponseMovie> call, Response<ResponseMovie> response) {
                              if (response.isSuccessful()) {
                                  results = (ArrayList<Results>) response.body().getResults();
-                                 adapterMovie = new AdapterMovie(results);
+                                 adapterMovie = new AdapterMovie(results, activity);
                                  recyclerMoviesBr.setLayoutManager(layoutManagerBr);
-
                                  recyclerMoviesBr.setHasFixedSize(true);
                                  recyclerMoviesBr.setNestedScrollingEnabled(true);
                                  recyclerMoviesBr.setAdapter(adapterMovie);
@@ -98,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                          public void onResponse(Call<ResponseMovie> call, Response<ResponseMovie> response) {
                              if (response.isSuccessful()) {
                                  results = (ArrayList<Results>) response.body().getResults();
-                                 adapterMovie = new AdapterMovie(results);
+                                 adapterMovie = new AdapterMovie(results, activity);
                                  recyclerMoviesUs.setLayoutManager(layoutManagerUs);
 
                                  recyclerMoviesUs.setHasFixedSize(true);
@@ -118,5 +120,7 @@ public class MainActivity extends AppCompatActivity {
         );
         return results;
     }
+
+
 
 }
